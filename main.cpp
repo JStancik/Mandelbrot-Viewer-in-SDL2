@@ -8,6 +8,28 @@
 
 int main(int argc, char* args[])
 {
+    std::string w;
+    std::cout<<"Enter width: ";
+    std::cin>>w;
+    std::string h;
+    std::cout<<"Enter height: ";
+    std::cin>>h;
+    std::cout<<"("+w+", "+h+")"<<std::endl;
+
+    int width = std::stoi(w);
+    int height = std::stoi(h);
+
+    std::string x;
+    std::cout<<"Enter X step: ";
+    std::cin>>x;
+    std::string y;
+    std::cout<<"Enter Y step: ";
+    std::cin>>y;
+    std::cout<<"("+x+", "+y+")"<<std::endl;
+
+    int xStep = std::stoi(x);
+    int yStep = std::stoi(y);
+    
     //SDL init
     if(SDL_Init(SDL_INIT_VIDEO) > 0){
         std::cout << "SDL_Init FAILED. ERROR: " << SDL_GetError() << std::endl;
@@ -17,11 +39,9 @@ int main(int argc, char* args[])
         std::cout << "IMG_Init FAILED. ERROR: " << SDL_GetError() << std::endl;
     }
     
-    const int SCREEN_WIDTH = 1080;
+    
 
-    const int SCREEN_HEIGHT = 1080;
-
-    RenderWindow window("Mandelrot",SCREEN_WIDTH,SCREEN_HEIGHT);
+    RenderWindow window("Mandelrot",width,height);
     int windowRefreshRate = 1000/window.getRefreshRate();
 
     bool running = true;
@@ -36,31 +56,14 @@ int main(int argc, char* args[])
 
     int steps = 1;
 
-    bool rStepP = false;
-    bool rStepN = false;
-    bool iStepP = false;
-    bool iStepN = false;
-
     double viewPosX = -2;
     double viewPosY = -2;
 
-    bool viewPosXP = false;
-    bool viewPosXN = false;
-    bool viewPosYP = false;
-    bool viewPosYN = false;
+    int rMod = 0;
+    int gMod = 0;
+    int bMod = 0;
 
-
-    float rMod = 0;
-    float gMod = 0;
-    float bMod = 0;
-
-    bool isRP = false;
-    bool isGP = false;
-    bool isBP = false;
-
-    bool isRN = false;
-    bool isGN = false;
-    bool isBN = false;
+    bool isBlack = false;
 
     bool change = true;
 
@@ -79,182 +82,81 @@ int main(int argc, char* args[])
                 if(event.type == SDL_QUIT){
                     running = false;    
                 }
-                else if(event.type == SDL_KEYDOWN){
+                else if(event.type == SDL_KEYUP){
+                    change = true;
                     switch(event.key.keysym.sym){
-                        case SDLK_q:
-                            running = false;
-                            break;
                         case SDLK_o:
-                            isRP = true;
+                            rMod += 1;
                             break;
                         case SDLK_l:
-                            isRN = true;
+                            rMod -= 1;
                             break;
                         case SDLK_i:
-                            isGP = true;
+                            gMod += 1;
                             break;
                         case SDLK_k:
-                            isGN = true;
+                            gMod -= 1;
                             break;
                         case SDLK_u:
-                            isBP = true;
+                            bMod += 1;
                             break;
                         case SDLK_j:
-                            isBN = true;
+                            bMod -= 1;
                             break;
                         case SDLK_w:
-                            viewPosYN = true;
+                            viewPosY -= yStep*iStep;
                             break;
                         case SDLK_a:
-                            viewPosXN = true;
+                            viewPosX -= xStep*rStep;
                             break;
                         case SDLK_s:
-                            viewPosYP = true;
+                            viewPosY += yStep*iStep;
                             break;
                         case SDLK_d:
-                            viewPosXP = true;
+                            viewPosX += xStep*rStep;
                             break;
                         case SDLK_UP:
-                            iStepP = true;
-                            rStepP = true;
+                            iStep = iStep*2;
+                            rStep = rStep*2;
+                            viewPosX -= 1080/2*rStep;
+                            viewPosY -= 1080/2*iStep;
                             break;
                         case SDLK_DOWN:
-                            iStepN = true;
-                            rStepN = true;
+                            iStep = iStep/2;
+                            rStep = rStep/2;
+                            viewPosX += 1080/2*rStep;
+                            viewPosY += 1080/2*iStep;
                             break;
                         case SDLK_r:
                             rStep = 4.0/1080.0;
                             iStep = 4.0/1080.0;
                             viewPosX = -2;
                             viewPosY = -2;
-                            change = true;
                             break;
                         case SDLK_t:
-                            change = true;
                             steps++;
                             break;
                         case SDLK_g:
-                            if(steps>0){
-                            change = true;
-                            steps--;
-                            }
+                            if(steps>0)
+                                steps--;
                             break;
-                    }
-                }
-                else if(event.type == SDL_KEYUP){
-                    switch(event.key.keysym.sym){
-                        case SDLK_o:
-                            isRP = false;
+                        case SDLK_b:
+                            isBlack=!isBlack;
                             break;
-                        case SDLK_l:
-                            isRN = false;
+                        case SDLK_q:
+                            running = false;
                             break;
-                        case SDLK_i:
-                            isGP = false;
-                            break;
-                        case SDLK_k:
-                            isGN = false;
-                            break;
-                        case SDLK_u:
-                            isBP = false;
-                            break;
-                        case SDLK_j:
-                            isBN = false;
-                            break;
-                        case SDLK_w:
-                            viewPosYN = false;
-                            break;
-                        case SDLK_a:
-                            viewPosXN = false;
-                            break;
-                        case SDLK_s:
-                            viewPosYP = false;
-                            break;
-                        case SDLK_d:
-                            viewPosXP = false;
-                            break;
-                        case SDLK_UP:
-                            iStepP = false;
-                            rStepP = false;
-                            break;
-                        case SDLK_DOWN:
-                            iStepN = false;
-                            rStepN = false;
-                            break;
-                        
                     }
                 }
             }
             accumTime -= timestep;
         }
 
-        if(isRP){
-            change = true;
-            rMod += 1;
-        }
-        if(isRN){
-            change = true;
-            rMod -= 1;
-        }
-        if(isGP){
-            change = true;
-            gMod += 1;
-        }
-        if(isGN){
-            change = true;
-            gMod -= 1;
-        }
-        if(isBP){
-            change = true;
-            bMod += 1;
-        }
-        if(isBN){
-            change = true;
-            bMod -= 1;
-        }
-        if(iStepP){
-            change = true;
-            iStep += iStep*2;
-        }
-        if(iStepN){
-            change = true;
-            iStep -= iStep/2;
-        }
-        if(rStepP){
-            change = true;
-            rStep += rStep*2;
-        }
-        if(rStepN){
-            change = true;
-            rStep -= rStep/2;
-        }
-        if(viewPosXP){
-            change = true;
-            viewPosX += 1080/2*rStep;
-        }
-        if(viewPosXN){
-            change = true;
-            viewPosX -= 1080/2*rStep;
-        }
-        if(viewPosYP){
-            change = true;
-            viewPosY += 1080/2*iStep;
-        }
-        if(viewPosYN){
-            change = true;
-            viewPosY -= 1080/2*iStep;
-        }
-
-
-
         if(change){
             window.clear();
-            window.drawMandelbrot(c,rMod,gMod,bMod,iStep,rStep,viewPosX,viewPosY,steps);
+            window.drawMandelbrot(c,rMod,gMod,bMod,iStep,rStep,viewPosX,viewPosY,steps,isBlack,width,height);
             window.display();
         }
-        change = false;
-        
-        
 
         int frameTicks = SDL_GetTicks()-startTicks;
         if(frameTicks<windowRefreshRate){

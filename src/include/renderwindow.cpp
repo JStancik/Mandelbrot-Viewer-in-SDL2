@@ -56,28 +56,28 @@ void RenderWindow::setColor(int r,int g,int b,int a){
     SDL_SetRenderDrawColor(renderer,r,g,b,a);
 }
 
-void RenderWindow::drawMandelbrot(utils::complex &c,float &rMod,float &gMod,float &bMod,double &iStep,double &rStep,double &viewPosX,double &viewPosY,int steps){
-    utils::complex temp(0,0);
-    for(int i=0;i<1080;i++){
-        for(int j=0;j<1080;j++){
+void RenderWindow::drawMandelbrot(utils::complex &c,int &rMod,int &gMod,int &bMod,double &iStep,double &rStep,double &viewPosX,double &viewPosY,int &steps,bool &isBlack,int &width,int &height){
+    for(int i=0;i<width;i++){
+        for(int j=0;j<height;j++){
             utils::complex z(0,0);
             bool bounded = true;
             int k;
             for(k=0;k<steps;k++){
-                temp = z*z;
-                temp += c;
-                z = temp;
+                z = (z*z)+c;
                 if(z.imaginary>2||z.imaginary<-2||z.real>2||z.real<-2){
                     bounded = false;
                     break;
                 }
             }
             if(bounded){
-                setColor(0,0,0,255);
+                if(isBlack)
+                    setColor(0,0,0,255);
+                else
+                    setColor(-abs((k+1)*rMod%510-255)+255,-abs((k+1)*gMod%510-255)+255,-abs((k+1)*bMod%510-255)+255,255);
                 SDL_RenderDrawPoint(renderer,i,j);
             }
             else{
-                setColor(255-k*rMod,255-k*gMod,255-k*bMod,255);
+                setColor(-abs(k*rMod%510-255)+255,-abs(k*gMod%510-255)+255,-abs(k*bMod%510-255)+255,255);
                 SDL_RenderDrawPoint(renderer,i,j);
             }
             c.imaginary += iStep;
@@ -89,5 +89,10 @@ void RenderWindow::drawMandelbrot(utils::complex &c,float &rMod,float &gMod,floa
     c.real = viewPosX;
     c.imaginary = viewPosY;
 
-    std::cout<<"rendered"<<std::endl;
+    std::cout<<"--rendered--"<<std::endl;
+    std::cout<<"position: ("<<viewPosX<<", "<<viewPosY<<")"<<std::endl;
+    std::cout<<"iterations: "<<steps<<std::endl;
+    std::cout<<"step per pixel (r/i): ("<<rStep<<" / "<<iStep<<")"<<std::endl;
+    std::cout<<"zoom: "<<rStep*540<<std::endl;
+    std::cout<<"coloring: "<<rMod<<", "<<gMod<<", "<<bMod<<std::endl;
 }
