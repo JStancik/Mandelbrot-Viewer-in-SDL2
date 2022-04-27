@@ -64,7 +64,7 @@ void RenderWindow::drawMandelbrot(utils::complex &c,int &rMod,int &gMod,int &bMo
             int k;
             for(k=0;k<steps;k++){
                 z = (z*z)+c;
-                if(z.imaginary>2||z.imaginary<-2||z.real>2||z.real<-2){
+                if(z.real*z.real+z.imaginary*z.imaginary>=4){
                     bounded = false;
                     break;
                 }

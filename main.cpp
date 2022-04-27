@@ -29,6 +29,37 @@ int main(int argc, char* args[])
 
     int xStep = std::stoi(x);
     int yStep = std::stoi(y);
+    std::cout<<"would you like to initalize a position?: ";
+    std::string initAns;
+    std::cin>>initAns;
+    double viewPosX;
+    double viewPosY;
+    double rStep;
+    double iStep;      
+    int steps;
+    if(initAns=="y"){
+        std::string input;
+        std::cout<<"Enter x Pos: ";
+        std::cin>>input;
+        viewPosX = std::stod(input);
+        std::cout<<"Enter y Pos: ";
+        std::cin>>input;
+        viewPosY = std::stod(input);
+        std::cout<<"Enter zoom : ";
+        std::cin>>input;
+        rStep = std::stod(input)/540.0;
+        iStep = std::stod(input)/540.0;
+        std::cout<<"Enter steps: ";
+        std::cin>>input;
+        steps = std::stoi(input);
+    }
+    else{
+        viewPosX = -2;
+        viewPosY = -2;
+        rStep = 4.0/1080;
+        iStep = 4.0/1080;      
+        int steps = 1;
+    }
     
     //SDL init
     if(SDL_Init(SDL_INIT_VIDEO) > 0){
@@ -50,14 +81,6 @@ int main(int argc, char* args[])
     float currentTime = 0.0f;
 
     utils::complex c(-2,-2);
-
-    double rStep = 4.0/1080;
-    double iStep = 4.0/1080;
-
-    int steps = 1;
-
-    double viewPosX = -2;
-    double viewPosY = -2;
 
     int rMod = 0;
     int gMod = 0;
