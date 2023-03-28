@@ -3,11 +3,16 @@
 #include <iostream>
 #include <vector>
 
-#include "renderwindow.cpp"
-#include "utils.hpp"
+#include "src/include/renderwindow.cpp"
+#include "src/include/utils.hpp"
 
 int main(int argc, char* args[])
 {
+    std::cout<<"Type M for Mandelbrot or J for Julia set: ";
+    std::string type;
+    std::cin>>type;
+    bool isJulia = type == "J";
+
     std::string w;
     std::cout<<"Enter width: ";
     std::cin>>w;
@@ -29,6 +34,25 @@ int main(int argc, char* args[])
 
     int xStep = std::stoi(x);
     int yStep = std::stoi(y);
+
+    std::cout<<"Enter complex X: ";
+    std::cin>>x;
+    std::cout<<"Enter complex Y: ";
+    std::cin>>y;
+
+    double xComplex = std::stod(x);
+    double yComplex = std::stod(y);
+    utils::complex julia = utils::complex(xComplex,yComplex);
+    if(isJulia){
+
+        std::cout<<"Enter complex change X: ";
+        std::cin>>x;
+        std::cout<<"Enter complex change Y: ";
+        std::cin>>y;
+
+        xComplex = std::stod(x);
+        yComplex = std::stod(y);
+    }
     std::cout<<"would you like to initalize a position?: ";
     std::string initAns;
     std::cin>>initAns;
@@ -58,7 +82,7 @@ int main(int argc, char* args[])
         viewPosY = -2;
         rStep = 4.0/1080;
         iStep = 4.0/1080;      
-        int steps = 1;
+        steps = 1;
     }
     
     //SDL init
@@ -72,15 +96,15 @@ int main(int argc, char* args[])
     
     
 
-    RenderWindow window("Mandelrot",width,height);
-    int windowRefreshRate = 1000/window.getRefreshRate();
-
+    RenderWindow window("Fractal",width,height);
+    int windowRefreshRate = 17;
+    std::cout<<"c1";
     bool running = true;
     const float timestep = 0.01f;
     float accumTime;
     float currentTime = 0.0f;
 
-    utils::complex c(-2,-2);
+    utils::complex cNum(-2,-2);
 
     int rMod = 0;
     int gMod = 0;
@@ -98,86 +122,102 @@ int main(int argc, char* args[])
         float newTime = utils::getTimeSec();
         float frameTime = newTime - currentTime;
         currentTime = newTime;
-        accumTime += frameTime;
         
-        while(accumTime>=timestep){
-            while(SDL_PollEvent(&event)){
-                if(event.type == SDL_QUIT){
-                    running = false;    
-                }
-                else if(event.type == SDL_KEYUP){
-                    change = true;
-                    switch(event.key.keysym.sym){
-                        case SDLK_o:
-                            rMod += 1;
-                            break;
-                        case SDLK_l:
-                            rMod -= 1;
-                            break;
-                        case SDLK_i:
-                            gMod += 1;
-                            break;
-                        case SDLK_k:
-                            gMod -= 1;
-                            break;
-                        case SDLK_u:
-                            bMod += 1;
-                            break;
-                        case SDLK_j:
-                            bMod -= 1;
-                            break;
-                        case SDLK_w:
-                            viewPosY -= yStep*iStep;
-                            break;
-                        case SDLK_a:
-                            viewPosX -= xStep*rStep;
-                            break;
-                        case SDLK_s:
-                            viewPosY += yStep*iStep;
-                            break;
-                        case SDLK_d:
-                            viewPosX += xStep*rStep;
-                            break;
-                        case SDLK_UP:
-                            iStep = iStep*2;
-                            rStep = rStep*2;
-                            viewPosX -= 1080/2*rStep;
-                            viewPosY -= 1080/2*iStep;
-                            break;
-                        case SDLK_DOWN:
-                            iStep = iStep/2;
-                            rStep = rStep/2;
-                            viewPosX += 1080/2*rStep;
-                            viewPosY += 1080/2*iStep;
-                            break;
-                        case SDLK_r:
-                            rStep = 4.0/1080.0;
-                            iStep = 4.0/1080.0;
-                            viewPosX = -2;
-                            viewPosY = -2;
-                            break;
-                        case SDLK_t:
-                            steps++;
-                            break;
-                        case SDLK_g:
-                            if(steps>0)
-                                steps--;
-                            break;
-                        case SDLK_b:
-                            isBlack=!isBlack;
-                            break;
-                        case SDLK_q:
-                            running = false;
-                            break;
-                    }
+        while(SDL_PollEvent(&event)){
+            if(event.type == SDL_QUIT){
+                running = false;   
+            }
+            else if(event.type == SDL_KEYUP){
+                change = true;
+                switch(event.key.keysym.sym){
+                    case SDLK_o:
+                        rMod += 1;
+                        break;
+                    case SDLK_l:
+                        rMod -= 1;
+                        break;
+                    case SDLK_i:
+                        gMod += 1;
+                        break;
+                    case SDLK_k:
+                        gMod -= 1;
+                        break;
+                    case SDLK_u:
+                        bMod += 1;
+                        break;
+                    case SDLK_j:
+                        bMod -= 1;
+                        break;
+                    case SDLK_w:
+                        viewPosY -= yStep*iStep;
+                        break;
+                    case SDLK_a:
+                        viewPosX -= xStep*rStep;
+                        break;
+                    case SDLK_s:
+                        viewPosY += yStep*iStep;
+                        break;
+                    case SDLK_d:
+                        viewPosX += xStep*rStep;
+                        break;
+                    case SDLK_q:
+                        iStep = iStep*2;
+                        rStep = rStep*2;
+                        viewPosX -= width/4*rStep;
+                        viewPosY -= height/4*iStep;
+                        break;
+                    case SDLK_z:
+                        iStep = iStep/2;
+                        rStep = rStep/2;
+                        viewPosX += width/2*rStep;
+                        viewPosY += height/2*iStep;
+                        break;
+                    case SDLK_r:
+                        rStep = 4.0/1080.0;
+                        iStep = 4.0/1080.0;
+                        viewPosX = -2;
+                        viewPosY = -2;
+                        break;
+                    case SDLK_e:
+                        steps++;
+                        break;
+                    case SDLK_c:
+                        if(steps>0)
+                            steps--;
+                        break;
+                    case SDLK_b:
+                        isBlack=!isBlack;
+                        break;
+                    case SDLK_ESCAPE:
+                        running = false;
+                        break;
+                    case SDLK_t:
+                        julia.imaginary += yComplex;
+                        break;
+                    case SDLK_f:
+                        julia.real -= xComplex;
+                        break;
+                    case SDLK_g:
+                        julia.imaginary -= yComplex;
+                        break;
+                    case SDLK_h:
+                        julia.real += xComplex;
+                        break;
+                    case SDLK_x:
+                        utils::save_image("img"+std::to_string(cNum.real)+","+std::to_string(cNum.imaginary)+","+std::to_string(rMod)+","+std::to_string(gMod)+","+std::to_string(bMod)+","+std::to_string(iStep)+","+std::to_string(rStep)+","+std::to_string(viewPosX)+","+std::to_string(viewPosY)+","+std::to_string(steps)+","+std::to_string(isBlack)+","+std::to_string(width)+","+std::to_string(height)+","+std::to_string(julia.real)+","+std::to_string(julia.imaginary)+".png",window.getRenderer(),width,height);
+                        break;
                 }
             }
-            accumTime -= timestep;
         }
 
         if(change){
             window.clear();
-            window.drawMandelbrot(c,rMod,gMod,bMod,iStep,rStep,viewPosX,viewPosY,steps,isBlack,width,height);
+            if(isJulia){
+                window.drawJulia(cNum,rMod,gMod,bMod,iStep,rStep,viewPosX,viewPosY,steps,isBlack,width,height,julia);
+            }
+            else{
+                window.drawMandelbrot(cNum,rMod,gMod,bMod,iStep,rStep,viewPosX,viewPosY,steps,isBlack,width,height);
+            }
             window.display();
         }
 

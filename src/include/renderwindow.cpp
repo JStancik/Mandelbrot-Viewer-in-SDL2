@@ -89,7 +89,49 @@ void RenderWindow::drawMandelbrot(utils::complex &c,int &rMod,int &gMod,int &bMo
     c.real = viewPosX;
     c.imaginary = viewPosY;
 
-    std::cout<<"--rendered--"<<std::endl;
+    std::cout<<"-------rendered-------"<<std::endl;
+    std::cout<<"position: ("<<viewPosX<<", "<<viewPosY<<")"<<std::endl;
+    std::cout<<"iterations: "<<steps<<std::endl;
+    std::cout<<"step per pixel (r/i): ("<<rStep<<" / "<<iStep<<")"<<std::endl;
+    std::cout<<"zoom: "<<rStep*540<<std::endl;
+    std::cout<<"coloring: "<<rMod<<", "<<gMod<<", "<<bMod<<std::endl;
+}
+
+void RenderWindow::drawJulia(utils::complex &z,int &rMod,int &gMod,int &bMod,double &iStep,double &rStep,double &viewPosX,double &viewPosY,int &steps,bool &isBlack,int &width,int &height,utils::complex &c){
+    for(int i=0;i<width;i++){
+        for(int j=0;j<height;j++){
+            bool bounded = true;
+            int k;
+            for(k=0;k<steps;k++){
+                z = z*z;
+                z = z+c;
+                if((z.real*z.real+z.imaginary*z.imaginary) > (double)4){
+                    bounded = false;
+                    break;
+                }
+            }
+            if(bounded){
+                if(isBlack)
+                    setColor(0,0,0,255);
+                else
+                    setColor(-abs((k+1)*rMod%510-255)+255,-abs((k+1)*gMod%510-255)+255,-abs((k+1)*bMod%510-255)+255,255);
+                SDL_RenderDrawPoint(renderer,i,j);
+            }
+            else{
+                setColor(-abs(k*rMod%510-255)+255,-abs(k*gMod%510-255)+255,-abs(k*bMod%510-255)+255,255);
+                SDL_RenderDrawPoint(renderer,i,j);
+            }
+            z.imaginary = viewPosY+iStep*(j+1);
+            z.real = viewPosX+(i+1)*rStep;
+        }
+        z.imaginary = viewPosY;
+        z.real = viewPosX+(i+1)*rStep;
+    }
+
+    z.real = viewPosX;
+    z.imaginary = viewPosY;
+
+    std::cout<<"-------rendered-------"<<std::endl;
     std::cout<<"position: ("<<viewPosX<<", "<<viewPosY<<")"<<std::endl;
     std::cout<<"iterations: "<<steps<<std::endl;
     std::cout<<"step per pixel (r/i): ("<<rStep<<" / "<<iStep<<")"<<std::endl;

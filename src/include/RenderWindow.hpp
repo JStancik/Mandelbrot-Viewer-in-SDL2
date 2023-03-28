@@ -15,6 +15,7 @@ class RenderWindow{
         void display();
         void setColor(int r,int g,int b,int a);
         void drawMandelbrot(utils::complex &c,int &rMod,int &gMod,int &bMod,double &iStep,double &rStep,double &viewPosX,double &viewPosY,int &steps,bool &isBlack,int &width,int &height);
+        void drawJulia(utils::complex &c,int &rMod,int &gMod,int &bMod,double &iStep,double &rStep,double &viewPosX,double &viewPosY,int &steps,bool &isBlack,int &width,int &height,utils::complex &cComplex);
     private:
         SDL_Window* window;
         SDL_Renderer* renderer;

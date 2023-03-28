@@ -1,19 +1,20 @@
-# Mandelbrot Viewer in SDL2
- A mandelbrot set viewer with controls to move, zoom, and colorize
+# Fractal Viewer in SDL2
+ A mandelbrot and julia set viewer with controls to move, zoom, and colorize
 
 Controls:
-- WASD:       move camera
-- up arrow:   zoom out
-- down arrow: zoom in
-- T:          increase iterations / detail
-- G:          decrease iterations / detail
-- R:          reset view
-- Q:          quit
+- wasd:       move camera
+- q:          zoom out
+- z:          zoom in
+- e:          increase iterations / detail
+- c:          decrease iterations / detail
+- r:          reset view
+- ESC:        quit
+- tfgh:       move julia set constant for julia set mode
 
-Coloration:
-- UJ:         adjust blue coloration
-- IK:         adjust green coloration
-- OL:         adjust red coloration
-- B:          fill black or colored toggle
+Colorization:
+- uj:         adjust blue coloration
+- ik:         adjust green coloration
+- ol:         adjust red coloration
+- b:          fill black or colored toggle
 
 Enjoy!
